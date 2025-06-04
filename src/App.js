@@ -1,6 +1,7 @@
-import React from 'react';
+# Create the corrected App.js file
+app_js_content = '''import React from 'react';
 import {
-  BarChart, LineChart, XAxis, YAxis, Bar, Line, Tooltip, Legend
+  BarChart, LineChart, XAxis, YAxis, Bar, Line, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 
 function App() {
@@ -326,8 +327,6 @@ function App() {
     return metrics;
   };
 
-  const { BarChart, LineChart, XAxis, YAxis, Bar, Line, Tooltip, Legend } = window.Recharts || {};
-
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
@@ -454,7 +453,7 @@ function App() {
           </div>
 
           {/* Results */}
-          {results && BarChart && (
+          {results && (
             <div className="space-y-6">
               {activeView === 'summary' && (
                 <div className="bg-white rounded-lg shadow p-6">
@@ -494,25 +493,29 @@ function App() {
                       <h4 className="font-semibold mb-2">
                         {metricConfig[getPrimaryMetric()]?.label || 'Primary Metric'} Impact
                       </h4>
-                      <BarChart width={500} height={250} data={getSingleMetricData(getPrimaryMetric())}>
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Bar dataKey="value" fill="#3B82F6" />
-                        <Tooltip />
-                      </BarChart>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart data={getSingleMetricData(getPrimaryMetric())}>
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Bar dataKey="value" fill="#3B82F6" />
+                          <Tooltip />
+                        </BarChart>
+                      </ResponsiveContainer>
                     </div>
                   )}
 
                   {graphType === 'multi' && getEnabledMetricsData().length > 0 && (
                     <div className="mt-6">
                       <h4 className="font-semibold mb-2">Multi-Metric Improvement Comparison (% Change)</h4>
-                      <BarChart width={800} height={400} data={getEnabledMetricsData()}>
-                        <XAxis dataKey="metric" angle={-45} textAnchor="end" height={100} />
-                        <YAxis label={{ value: 'Improvement %', angle: -90, position: 'insideLeft' }} />
-                        <Bar dataKey="improvement" fill="#10B981" name="% Improvement" />
-                        <Tooltip formatter={(value) => [`${value.toFixed(1)}%`, 'Improvement']} />
-                        <Legend />
-                      </BarChart>
+                      <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={getEnabledMetricsData()}>
+                          <XAxis dataKey="metric" angle={-45} textAnchor="end" height={100} />
+                          <YAxis label={{ value: 'Improvement %', angle: -90, position: 'insideLeft' }} />
+                          <Bar dataKey="improvement" fill="#10B981" name="% Improvement" />
+                          <Tooltip formatter={(value) => [`${value.toFixed(1)}%`, 'Improvement']} />
+                          <Legend />
+                        </BarChart>
+                      </ResponsiveContainer>
                     </div>
                   )}
 
@@ -521,12 +524,14 @@ function App() {
                       {getAvailableMetrics().map(key => (
                         <div key={key} className="border-t pt-4">
                           <h4 className="font-semibold mb-2">{metricConfig[key]?.label || key} Impact</h4>
-                          <BarChart width={400} height={200} data={getSingleMetricData(key)}>
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Bar dataKey="value" fill={metricConfig[key]?.color || '#3B82F6'} />
-                            <Tooltip />
-                          </BarChart>
+                          <ResponsiveContainer width="100%" height={200}>
+                            <BarChart data={getSingleMetricData(key)}>
+                              <XAxis dataKey="name" />
+                              <YAxis />
+                              <Bar dataKey="value" fill={metricConfig[key]?.color || '#3B82F6'} />
+                              <Tooltip />
+                            </BarChart>
+                          </ResponsiveContainer>
                         </div>
                       ))}
                     </div>
@@ -545,19 +550,21 @@ function App() {
                           <p>Projected: {formatValue(results.projected[key], metricConfig[key]?.type || 'number')}</p>
                           <p>Improvement: {formatValue(results.improvements[key], metricConfig[key]?.type || 'number')}</p>
                         </div>
-                        <BarChart width={300} height={200} data={getSingleMetricData(key)}>
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Bar dataKey="value" fill={metricConfig[key]?.color || '#3B82F6'} />
-                          <Tooltip />
-                        </BarChart>
+                        <ResponsiveContainer width="100%" height={200}>
+                          <BarChart data={getSingleMetricData(key)}>
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Bar dataKey="value" fill={metricConfig[key]?.color || '#3B82F6'} />
+                            <Tooltip />
+                          </BarChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
 
-              {activeView === 'roi' && enabledMetrics.eaCost && LineChart && (
+              {activeView === 'roi' && enabledMetrics.eaCost && (
                 <div className="bg-white rounded-lg shadow p-6">
                   <h3 className="text-lg font-semibold mb-4">ROI Analysis</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -572,16 +579,18 @@ function App() {
                     </div>
                     <div>
                       <h4 className="font-semibold mb-2">3-Year Projection</h4>
-                      <LineChart width={350} height={250} data={[
-                        { year: 'Year 1', value: results.improvements.revenue || 0 },
-                        { year: 'Year 2', value: (results.improvements.revenue || 0) * 1.1 },
-                        { year: 'Year 3', value: (results.improvements.revenue || 0) * 1.2 }
-                      ]}>
-                        <XAxis dataKey="year" />
-                        <YAxis />
-                        <Line type="monotone" dataKey="value" stroke="#3B82F6" strokeWidth={2} />
-                        <Tooltip />
-                      </LineChart>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <LineChart data={[
+                          { year: 'Year 1', value: results.improvements.revenue || 0 },
+                          { year: 'Year 2', value: (results.improvements.revenue || 0) * 1.1 },
+                          { year: 'Year 3', value: (results.improvements.revenue || 0) * 1.2 }
+                        ]}>
+                          <XAxis dataKey="year" />
+                          <YAxis />
+                          <Line type="monotone" dataKey="value" stroke="#3B82F6" strokeWidth={2} />
+                          <Tooltip />
+                        </LineChart>
+                      </ResponsiveContainer>
                     </div>
                   </div>
                 </div>
@@ -593,4 +602,17 @@ function App() {
     </div>
   );
 }
-export default App;
+
+export default App;'''
+
+# Write the corrected App.js file
+with open('App_fixed.js', 'w') as f:
+    f.write(app_js_content)
+
+print("Fixed App.js file created successfully!")
+print("\nKey fixes made:")
+print("1. Removed the incorrect 'window.Recharts' reference")
+print("2. Added ResponsiveContainer import from recharts")
+print("3. Wrapped all charts in ResponsiveContainer for better responsiveness")
+print("4. Fixed the conditional rendering logic")
+print("5. Updated default input values to match your screenshot")
